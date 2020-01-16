@@ -243,9 +243,9 @@ newProcess2:
 	pop bc
 	ld (hl),c							; Update root or previous process pointer
 	inc hl
-	ld (hl),b		
-	inc (iy+baseProcCount)
-	ld a,(iy+baseProcCount)
+	ld (hl),b	
+
+	call procNewID					; get a unique procID	
 	ld (ix+procID),a
 
 	ld hl,procName					; name offset
@@ -374,6 +374,19 @@ procFind3:
 	pop bc
 	ret
 
+	;
+	; return a new unique procID in a
+	;
+procNewID:
+	push ix
+procNewID1:
+	inc (iy+baseProcCount)
+	ld a,(iy+baseProcCount)
+	call procFind				; if this ID is in use, get another
+	jr c,procNewID1
+	ld a,(iy+baseProcCount)
+	pop ix
+	ret
 
 
 
